@@ -6,17 +6,41 @@ const app = express();
 
 const cors = require("cors");
 
-app.use(
-    cors({
-        origin: true, // Mengizinkan semua origin dengan merefleksikan nilai origin dari request
-        credentials: true,
-        allowedHeaders: ["Content-Type", "Authorization"],
-        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    })
-);
+// app.use(
+//     cors({
+//         origin: true, // Mengizinkan semua origin dengan merefleksikan nilai origin dari request
+//         credentials: true,
+//         allowedHeaders: ["Content-Type", "Authorization"],
+//         methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+//     })
+// );
 
 // Tambahkan handler untuk preflight OPTIONS request
 // app.options("/*", cors());
+
+// Middleware CORS global: mengatur header untuk semua request
+app.use((req, res, next) => {
+    // Atur header yang diperlukan
+    const origin = req.headers.origin || "*";
+    res.header("Access-Control-Allow-Origin", origin);
+    res.header(
+        "Access-Control-Allow-Methods",
+        "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS"
+    );
+    res.header(
+        "Access-Control-Allow-Headers",
+        "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+    );
+    res.header("Access-Control-Allow-Credentials", "true"); // jika diperlukan
+
+    // Jika request method OPTIONS, langsung kirim response 200
+    if (req.method === "OPTIONS") {
+        return res.sendStatus(200);
+    }
+
+    next();
+});
+
 app.use(express.json());
 
 const port = process.env.PORT;
