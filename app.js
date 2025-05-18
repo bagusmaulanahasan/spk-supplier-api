@@ -16,8 +16,7 @@ app.use(
 );
 
 // Tambahkan handler untuk preflight OPTIONS request
-app.options("*", cors());
-
+// app.options("/*", cors());
 app.use(express.json());
 
 const port = process.env.PORT;
