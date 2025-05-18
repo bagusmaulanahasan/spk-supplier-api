@@ -1,0 +1,5 @@
+# File Environment
+.env
+
+# Folder Dependency
+node_modules/
