@@ -4,13 +4,23 @@ require("dotenv").config();
 
 const app = express();
 
-const port = process.env.PORT;
-
 const cors = require("cors");
 
-app.use(cors());
+app.use(
+    cors({
+        origin: true, // Mengizinkan semua origin dengan merefleksikan nilai origin dari request
+        credentials: true,
+        allowedHeaders: ["Content-Type", "Authorization"],
+        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    })
+);
+
+// Tambahkan handler untuk preflight OPTIONS request
+app.options("*", cors());
 
 app.use(express.json());
+
+const port = process.env.PORT;
 
 // Import routes
 const criteriaRoutes = require("./routes/criteriaRoutes");
@@ -28,7 +38,11 @@ app.use("/api/login", login);
 app.use("/api/criteria", verifyToken, criteriaRoutes);
 app.use("/api/criteria-values", verifyToken, criteriaValuesRoutes);
 app.use("/api/results", verifyToken, resultsRoutes);
-app.use("/api/supplier-criteria-values", verifyToken, supplierCriteriaValuesRoutes);
+app.use(
+    "/api/supplier-criteria-values",
+    verifyToken,
+    supplierCriteriaValuesRoutes
+);
 app.use("/api/suppliers", verifyToken, suppliersRoutes);
 app.use("/api/users", verifyToken, isManager, usersRoutes);
 app.use("/api/weights", verifyToken, weightsRoutes);
